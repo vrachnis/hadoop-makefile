@@ -11,20 +11,26 @@ HADOOP_HOME = ${HOME}/hadoop
 # The classes that need compiling
 CLASSES = 
 
-all: class_dir classes
+# This only works for 1 package.
+# TODO: fix for 2 or more class files
+PACKAGE := $(shell head -1 $(CLASSES) | cut -d" " -f2 | sed 's/\./\//g; s/;//')
 
-classes : $(CLASSES:.java=.class)
+.PHONY: send clean jar
 
-%.class: %.java
+all: $(TITLE)_classes $(TITLE)_classes/$(PACKAGE)/$(CLASSES:.java=.class)
+
+jar: $(TITLE).jar
+
+$(TITLE)_classes/$(PACKAGE)/%.class: %.java
 	$(JC) -classpath $(HADOOP_HOME)/hadoop-0.20.2-core.jar:$(HADOOP_HOME)/lib/commons-cli-1.2.jar -d $(TITLE)_classes $<
 
-class_dir:
+$(TITLE)_classes:
 	$(MKDIR) $(TITLE)_classes
 
-jar: class_dir classes
+%.jar: $(TITLE)_classes $(TITLE)_classes/$(PACKAGE)/$(CLASSES:.java=.class)
 	$(JAR) -cvf $(TITLE).jar -C $(TITLE)_classes/ .
 
-send: jar
+send: $(TITLE).jar
 	$(SCP) $(TITLE).jar $(REMOTE_HOST):
 
 clean:
