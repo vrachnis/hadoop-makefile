@@ -14,7 +14,7 @@ CLASSES =
 # This only works for 1 package.
 # TODO: fix for 2 or more class files
 #PACKAGE := $(shell head -1 $(CLASSES) | cut -d" " -f2 | sed 's/\./\//g; s/;//')
-PACKAGE = gr/upatras/ceid/romo
+PACKAGE = 
 BYTECODE := $(patsubst %.java, $(TITLE)_classes/$(PACKAGE)/%.class, $(CLASSES))
 
 .PHONY: send clean jar
